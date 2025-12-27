@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block style%}
+<title>AMBMUN | Home</title>
+{% endblock %}
+
+{% block content %}
+<div class="banner" style="padding-top: 0px; padding-bottom: 30px;">
+    <h1 class="title centered">{{ main_banner_text }}</h1>
+    <h2 class="title centered">{{ sub_banner_text }}</h2>
+</div>
+
+<h3 id="homepagedate">{% for date in scheduleDates %}{{date.date|date:"F"}} {{date.date|date:"j"}}<sup>{{date.date|date:"S"}}</sup> {{date.date|date:"Y"}}{% if forloop.counter != scheduleDates|length %} & {% endif %}{% endfor %}</h3>
+<div class="centerer" style='color: white; gap: 50px'>
+    <div class="columnizer">
+        <span class="timeheader" id="days">75</span><br>
+        <span>Days</span>
+    </div>
+    <div class="columnizer">
+        <span class="timeheader" id="hours">75</span><br>
+        <span>Hours</span>
+    </div>
+    <div class="columnizer">
+        <span class="timeheader" id="minutes">75</span><br>
+        <span>Minutes</span>
+    </div>
+    <div class="columnizer">
+        <span class="timeheader" id="seconds">75</span><br>
+        <span>Seconds</span>
+    </div>
+    
+</div>
+
+<div class="centerer" style="margin-top: 75px; margin-bottom: 150px;">
+    <a href="{{ registration_link_url }}" class="subtlelink">
+        <button style="height: 46px;">{{ registration_link_text }}</button>
+    </a>
+</div>
+<div class="centerer">
+    <!-- About text -->
+    <div style="width:80%; color: white; margin-bottom: 100px;">
+        <h1 style="font-family: 'Brush Script MT', cursive; font-weight: 100; font-size: 42px;" class="desktopmargin">{{ board_letter_title }}</h1>
+        <p class="desktopmarginright">
+            {% autoescape off %}{{ board_letter_body }}{% endautoescape %}
+        </p>
+    </div>
+</div>
+<h1 class="header">EXECUTIVE BOARD</h1>
+<div class="centerer">
+    <div class="cardgrid">
+        {% for member in board_members %}
+        <div class="card">
+            <img class='cardImage' src="{{member.photo.url}}">
+            <p class="cardMain">{{ member.name }}</p>
+            <p class="cardSub">{{ member.role }}</p>
+            <div class="centerer">
+                <button class="cardBtn" onclick="document.getElementById('{{member.id}}').classList.toggle('hidden')">More Info</button>
+            </div>
+            <p class="cardSub hidden" id="{{member.id}}">{{ member.about }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<!-- <div class="subrootcontainer">
+    <div class="subroot">
+        <h1 style="text-align: center; font-weight: 200; font-family: inter; font-size: 56px; margin-top: 0px; padding-top: 50px;">Al Mawakeb Al Barsha<br>
+            <span style="text-align: center; font-weight: 500; font-family: inter; font-size: 41px;">Model United Nations</span>
+        </h1>
+        </h3>
+        
+        
+    </div>
+</div> -->
+<script>
+    function refreshTimer() {
+    // ! THE FOLLOWING FUNCTION IS THE COUNTDOWN FUNCTION, YOU WILL SEE ANOTHER COPY OF IT IN THE SETTIMEOUT FUNCTION, THE FIRST COPY (OUTSIDE THE SETTIMEOUT) IS TO SET THE INITIAL VALUES IMMEDIATELY, THE SETTIMEOUT STARTS THE LOOP FUNCTION
+    // BEGIN COUNTDOWN FUNCTION
+    var currentdate = new Date();
+    // The next line is the countdown target, CHANGE ONLY THE STRING
+    // Format for the date func: "<month> <date>, <year> <hour in 24h>:<minute>:<second> GMT<+/-><timezone hour difference>:<timezone minute difference>"
+    var countdowndate = new Date("{{schedule.first.date|date:"j F Y"}} {{schedule.first.start_time|time:"g:i A"}} GMT+04:00");
+    const diffTime = Math.abs(countdowndate.getTime() - currentdate.getTime());
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60) % 24);
+    const diffMinutes = Math.floor(diffTime / (1000 * 60) % 60);
+    const diffSeconds = Math.floor(diffTime / 1000 % 60);
+    // if something goes wrong with the countdown uncomment the next comment to check the current output in the console
+    // console.log(diffDays + " days, " + diffHours + " hours, " + diffMinutes + " minutes, and " + diffSeconds + " seconds");
+    if((countdowndate.getTime() - currentdate.getTime()) >= 0) {
+        document.getElementById("days").innerText = diffDays;
+        document.getElementById("hours").innerText = diffHours;
+        document.getElementById("minutes").innerText = diffMinutes;
+        document.getElementById("seconds").innerText = diffSeconds;
+    }
+    else {
+        document.getElementById("days").innerText = 0;
+        document.getElementById("hours").innerText = 0;
+        document.getElementById("minutes").innerText = 0;
+        document.getElementById("seconds").innerText = 0;
+    }
+    }
+    // END COUNTDOWN FUNCTION
+    // NOTE ANY CHANGES MADE TO EITHER FUNCTION MUST ALSO BE APPLIED TO THE OTHER AS INACCURACIES MAY OCCUR
+    setInterval(refreshTimer, 1000);
+</script>
+
+{% comment %} <div class="root"
+    style="padding-bottom: 30px; min-height: 718px; background-image: url('{% static '../media/images/Background2.png' %}'); background-repeat: no-repeat; background-size: cover;">
+    
+</div>
+
+
+<div class="root" style="background-color: #E8E8E8; margin-top: -25px; padding: 20px; width: calc(100% - 40px)">
+    <h2 style="font-family: inter; font-weight: 500; font-size: 30px;" class="desktopmargin">Board Members</h2>
+    <div class="cardrow flexcontainer" style="gap: 100px;">
+        {% for board_member in board_members %}
+        <div class="card">
+            <div class="cardcontent">
+                <div class="centerer" style="margin-top: 20px;">
+                    <img class="cardimage" src="{{ board_member.photo.url }}">
+                </div>
+                <h2 class="cardtitle">{{ board_member.name }}</h2>
+                <!-- <h3 class="cardbody">{{ board_member.role }}</h3> -->
+                <div class="centerer">
+                    <button style="height: 14px; font-size: 8px; margin-top: 10px; margin-bottom: 10px;"
+                        onclick="this.parentElement.parentElement.children[3].hidden = !this.parentElement.parentElement.children[3].hidden;">More
+                        Info</button>
+                </div>
+                <div class="moreinfo" hidden>{{ board_member.about }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div> {% endcomment %}
+
+{% endblock %}

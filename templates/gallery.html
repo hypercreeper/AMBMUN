@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block style%}
+<title>AMBMUN | Gallery</title>
+
+<style>
+    td {
+        text-align: left;
+    }
+
+    .alternaterow {
+        background-color: #dbdbdb;
+    }
+
+    .primaryrow {
+        background-color: white;
+    }
+</style>
+
+{% endblock %}
+{% block content %}
+<h1 class="header">Gallery</h1>
+<div class="cardrow flexcontainer">
+    {% for album in albums %}
+    <div class="flexchild expandable large" style="margin-left: 0px;"
+        onclick="if(event.srcElement.nodeName != 'BUTTON') {window.location.href='/Album/{{ album.id }}/';}"
+        hidden>
+        <div class="centerer"><img style="object-fit: contain; object-position: center center;"
+                src="{{ album.cover_photo.url }}" width="225" height="200"></div>
+        <div class="centerer">
+            <h3 class="comitteename">{{ album.album_name }}</h3>
+        </div>
+        <div class="centerer">
+            <h4 class="albumdesc">{{ album.album_description }}</h4>
+        </div>
+        
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

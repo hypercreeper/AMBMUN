@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block style%}
+<title>AMBMUN | Album</title>
+
+<style>
+    td {
+        text-align: left;
+    }
+
+    .alternaterow {
+        background-color: #dbdbdb;
+    }
+
+    .primaryrow {
+        background-color: white;
+    }
+</style>
+
+{% endblock %}
+{% block content %}
+<script>
+    var albumdata = [{% for media_item in media_items %}{photo: "{{media_item.photo.url}}", video: "{{media_item.video}}", media_type: "{{media_item.media_type}}"},{% endfor %}];
+</script>
+<a class="desktopmargin" href="{% url 'gallery' %}" style="width: auto; margin-bottom: 10px; padding-bottom: 5px;">
+    <h2 style="font-family: Loverica; font-size: 20px; margin: 0; padding: 0;"><- Albums</h2>
+</a>
+<h1 class="header desktopmargin" style="text-align: left; margin-top: 0px;">{{ album.album_name }}</h1>
+<div class="cardrow flexcontainer">
+    {% for media_item in media_items %}
+    <div class="flexchild expandable large" style="margin-left: 0px; padding-left: 150px; padding-right: 150px; "
+        onclick="if(event.srcElement.nodeName != 'BUTTON') { viewMedia('{{ media_item.photo.url }}', '{{ media_item.video }}', '{{ media_item.media_type }}') }"
+        hidden>
+        <div class="centerer"><img style="object-fit: contain; object-position: center center;"
+                src="{{ media_item.photo.url }}" height="300" data-type="{{ media_item.media_type }}"></div>
+        <div class="centerer">
+            <h3 class="comitteename" style="display: {{ media_item.description_visibility }};">{{ media_item.description }}</h3>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<script src="{% static "imageViewer.js" %}"></script>
+{% endblock %}

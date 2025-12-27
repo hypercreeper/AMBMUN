@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block style %}
+<title>AMBMUN | Contact</title>
+{% endblock %}
+
+{% block content %}
+<h1 class="header">Contact Us</h1>
+{% comment %} <p class="desktopmargin">If you would like to get any more information, please contact us at <a
+        href="mailto:ymun2024@gmail.com"
+        style="text-decoration: underline; text-transform: lowercase;">ymun2025@gmail.com</a>
+</p> {% endcomment %}
+<div class="contact-container">
+    <div class="centerer">
+        <div class="cardgrid">
+            {% for member in board_members %}
+            <div class="card landscape">
+                <img class='cardPfp' src="{{member.photo.url}}">
+                <div style="margin-left: 20px; width: 100%;">
+                    <p class="cardMain">{{ member.name }}</p>
+                    <p class="cardMain">{{ member.email }}</p>
+                    <p class="cardMain">{{ member.number }}</p>
+                    <div style="display: flex; justify-content: space-between; flex:1;">
+                        <a href="mailto:{{ member.email }}"><button class="cardBtn landscape">Email</button></a>
+                        <a href="https://wa.me/{{ member.number }}"><button class="cardBtn landscape">WhatsApp</button></a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

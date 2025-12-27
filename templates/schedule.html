@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load set %}
+
+{% block style%}
+<title>AMBMUN | Schedule</title>
+{% endblock %}
+
+{% block content %}
+<h1 class="header">Schedule</h1>
+<div class=" centerer flexcontainer" style="gap: 100px;">
+    <!-- HTML SHOULD NOT BE TOUCHED, THE DYNAMIC PART IS IN THE JS DOWN BELOW, CHECK NEXT COMMENT -->
+        {% for date in scheduleDates %}
+        <div>
+        <div class="centerer" style="flex-direction: column; align-items: center;  margin-bottom: 30px;" >
+            <h2 class="header">DAY {{forloop.counter}}</h2>
+            <h3 style="margin: 0px; font-size: 18px; font-family: Loverica;">{{ date.0.date|date:"F j" }}</h3>
+        </div>
+        <div class="columnCenterer">
+            {% for schedulentry in date %}
+            <div class="schedule-square" id="square{{forloop.parentloop.counter}}{{forloop.counter}}">
+                <p class="schedule-content">{{schedulentry.event_title}}</p>
+                <p class="schedule-content sub">{{schedulentry.start_time|time:"g:i A"}} - {{schedulentry.end_time|time:"g:i A"}}</p>
+            </div>
+            {% if forloop.counter < date|length %}
+            <div class="schedule-vertical-line" id="verline{{forloop.parentloop.counter}}{{forloop.counter|add:1}}"></div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% comment %} <div class="centerer">
+            <div class="schedules" style="width: 238px; margin-top: 19px;">
+                {% for schedulentry in date %}
+                {% if forloop.counter|divisibleby:2 %}
+                <div class="schedule-centerer">
+                    <div class="schedule-spacer"></div>
+                </div>
+                {% else %}
+
+                <div class="schedule-centerer" style="flex-direction: column; justify-content: start;">
+                    <div style="width: 100%; display: flex; align-items: center;">
+                        {% with forloop.parentloop.counter|add:"-1" as parentLoop  %}
+                        {% with scheduleDateLengths|get_item:parentLoop as val %}
+                        <div class="schedule-bubble" id="bubble{{forloop.counter|add:val}}">{{schedulentry.start_time|time:"g:i A"}} - {{schedulentry.end_time|time:"g:i A"}}</div>
+                        <div class="schedule-line" id="line{{forloop.counter|add:val}}"></div>
+                        {% endwith %}
+                        {% endwith %}
+                    </div>
+                    <div style="width: 100%; text-align: left; margin-top: 5px;">{{schedulentry.event_title}}</div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div style="height: 100%; margin-top: 19px;">
+                {% for schedulentry in date %}
+                {% with forloop.parentloop.counter|add:"-1" as parentLoop  %}
+                {% with scheduleDateLengths|get_item:parentLoop as val %}
+                <div class="schedule-circle" id="circle{{forloop.counter|add:val}}"></div>
+                <div class="centerer">
+                    <div class="schedule-vertical-line{% if not forloop.counter < date|length %}-invisible{% endif %}" id="verline{{forloop.counter|add:val}}"></div>
+                </div>
+                {% endwith %}
+                {% endwith %}
+                {% endfor %}
+            </div>
+            <div class="schedules" style="width: 238px; margin-top: 11px;">
+                {% for schedulentry in date %}
+                {% if forloop.counter|divisibleby:2 %}
+                <div class="schedule-centerer" style="flex-direction: column; justify-content: start;">
+                    <div style="width: 100%; display: flex; align-items: center;">
+                        {% with forloop.parentloop.counter|add:"-1" as parentLoop  %}
+                        {% with scheduleDateLengths|get_item:parentLoop as val %}
+                        <div class="schedule-line" id="line{{forloop.counter|add:val}}"></div>
+                        <div class="schedule-bubble" id="bubble{{forloop.counter|add:val}}">{{schedulentry.start_time|time:"g:i A"}} - {{schedulentry.end_time|time:"g:i A"}}</div>
+                        {% endwith %}
+                        {% endwith %}
+                    </div>
+                    <div style="width: 100%; text-align: right; margin-top: 5px;">{{schedulentry.event_title}}</div>
+                </div>
+                {% else %}
+                <div class="schedule-centerer">
+                    <div class="schedule-spacer"></div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div> {% endcomment %}
+    </div>
+        {% endfor %}
+    
+
+    <!-- <svg id="day2"></svg>
+            <svg id="day1"></svg> -->
+</div>
+
+<script>
+    // Day1 and Day2 images targeted
+    var day1 = document.getElementById("day1");
+    var day1Date = "{{ mun_day_1 }}";
+    var day2 = document.getElementById("day2");
+    var day2Date = "{{ mun_day_2 }}";
+
+    // Status assign function
+    var times = [{% for date in scheduleDates %}{'day':{{forloop.counter}},'times':[{% for entry in date %}new Date('{{entry.date|date:"j F Y"}} {{entry.start_time|time:"g:i A"}}'),{% endfor %}]},{% endfor %}];
+    var timesArr = [{% for entry in schedule %}new Date('{{entry.date|date:"j F Y"}} {{entry.start_time|time:"g:i A"}}'),{% endfor %}new Date('{{schedule.last.date|date:"j F Y"}} {{schedule.last.end_time|time:"g:i A"}}'),]
+    function setStatusColor(index, color) {
+        var pos = "";
+        var temp = [];
+        for(var i = 0; i < times.length; i++) {
+            for(var j = 0; j < times[i].times.length; j++) {
+                temp.push({day: i+1, time: j+1});
+            }
+        }
+        document.getElementById("square" + temp[index].day + temp[index].time).style.borderColor = color;
+        try {
+            document.getElementById("verline" + temp[index].day + temp[index].time).style.borderColor = color;
+        }
+        catch {
+        }
+    }
+    /*
+    function setStatusColor(index, color) {
+        document.getElementById("bubble" + index).style.backgroundColor = color;
+        document.getElementById("circle" + index).style.backgroundColor = color;
+        document.getElementById("line" + index).style.borderColor = color;
+        if(index > 0) {
+            document.getElementById("verline" + (index-1)).style.borderColor = color;
+        }
+        // console.log(callerName);
+        {% comment %} for (var i = 0; i < document.getElementsByClassName("schedule-bubble").length; i++) {
+            var element = document.getElementsByClassName("schedule-bubble")[i];
+            var circle = document.getElementsByClassName("schedule-circle")[i];
+            var line = document.getElementsByClassName("schedule-line")[i];
+            var verline = document.getElementsByClassName("schedule-vertical-line")[i];
+            element.style.backgroundColor = color;
+            line.style.borderColor = color;
+            verline.style.borderColor = color;
+            circle.style.backgroundColor = color;
+            // console.log(element);
+        } {% endcomment %}
+    }
+        */
+    function resetStatusColors() {
+        try{
+            for(var i = 0; i < timesArr.length; i++) {
+                {% comment %} console.log(i); {% endcomment %}
+                setStatusColor(i, "#000000");
+            }
+        }
+        catch{}
+    }
+    function fillStatusColors(endIndex) {
+        try{
+            resetStatusColors();
+            for (var i = endIndex - 1; i >= 0; i--) {
+                setStatusColor(i, "#35599b");
+            }
+            setStatusColor(endIndex, "#d7db2c");
+        }
+        catch(e) {
+            console.error(e);
+        }
+    }
+    function trueFillStatusColors(endIndex) {
+        try{
+            resetStatusColors();
+            for (var i = endIndex; i >= 0; i--) {
+                setStatusColor(i, "#35599b");
+            }
+        }
+        catch(e) {
+            console.error(e);
+        }
+    }
+    
+    //var now = "";
+    setInterval(function() {
+        var now = Date.now();
+        //now = new Date("14 January 2025 9:15 AM").getTime()
+        for(var i = 0; i < timesArr.length; i++) {
+            {% comment %} if(now > timesArr[i].getTime() && i == timesArr.length-1) {
+                trueFillStatusColors(i);
+            } {% endcomment %}
+             if(now > timesArr[i].getTime()) {
+                fillStatusColors(i);
+            }
+        }
+    }, 500);
+</script>
+
+{%endblock%}

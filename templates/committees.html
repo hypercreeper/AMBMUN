@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block style%}
+<title>AMBMUN | Committees</title>
+
+{% endblock %}
+{% block content %}
+<h1 class="header">Committees</h1>
+<div class="cardrow flexcontainer">
+    {% for committee in committees %}
+    <div class="flexchild expandable large" style="margin-left: 0px;" onclick="if(event.srcElement.nodeName != 'BUTTON') {window.location.href='/Committees/{{ committee.id }}/';}" hidden>
+        <div class="centerer">
+            <img class="committeeLogo" src="{{ committee.photo.url }}">
+        </div>
+        <div class="centerer">
+            <h3 class="comitteename">{{ committee.name }}</h3>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
