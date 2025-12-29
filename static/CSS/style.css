@@ -8,6 +8,10 @@
     --links: #D4B06A;
     --cardBackground: #0D0D0D;
 }
+img {
+    object-fit: cover;
+    object-position: center center;
+}
 
 body {
     font-family: Philosopher;
@@ -762,11 +766,6 @@ footer svg {
     margin: 0px 10px;
 }
 
-
-img {
-    object-fit: cover;
-    object-position: center center;
-}
 
 /* style.css */
 
